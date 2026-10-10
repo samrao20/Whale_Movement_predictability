@@ -17,3 +17,6 @@ data-raw/**/*.grd
 .DS_Store
 Thumbs.db
 ~$*
+
+# download cache
+data-raw/cache/
