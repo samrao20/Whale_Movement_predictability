@@ -1,0 +1,19 @@
+# R
+.Rproj.user/
+.Rhistory
+.RData
+.Rapp.history
+.Ruserdata
+renv/library/
+_targets/
+
+# Big rasters / NetCDF downloads (re-create via scripts in data-raw/)
+data-raw/**/*.nc
+data-raw/**/*.tif
+data-raw/**/*.tiff
+data-raw/**/*.grd
+
+# OS / editor
+.DS_Store
+Thumbs.db
+~$*
