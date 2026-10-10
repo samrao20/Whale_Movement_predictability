@@ -1,6 +1,6 @@
 """IMOS OceanCurrent GSLA delayed-mode geostrophic currents -> data/currents_cells.csv
 
-Samples every 5th day (~6 per month) via OpenDAP, averages u/v onto the 2-degree
+Samples every 15th day (~2 per month) via OpenDAP, averages u/v onto the 2-degree
 cells of the Water sheet, then takes monthly means. Resumable: per-year partial
 results are cached in data-raw/cache/ (git-ignored).
 
@@ -22,7 +22,7 @@ CAT = "https://thredds.aodn.org.au/thredds/catalog/IMOS/OceanCurrent/GSLA/DM/{y}
 DAP = "https://thredds.aodn.org.au/thredds/dodsC/"
 XLSX = "data-raw/Humpback_East_Australia_data.xlsx"
 CACHE = "data-raw/cache"
-STEP = 5
+STEP = 15
 
 y0 = int(sys.argv[1]) if len(sys.argv) > 2 else 2002
 y1 = int(sys.argv[2]) if len(sys.argv) > 2 else 2025
