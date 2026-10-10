@@ -51,3 +51,17 @@ Two sheets.
 
 Things to handle in the model: sightings before 2002 have no matching water
 data, sightings are presence-only (no absences), and effort is uneven over time.
+
+## Extra environmental data (`data/`, built by `data-raw/0*.py`)
+
+| file | what | coverage |
+|---|---|---|
+| `soi_monthly.csv` | Southern Oscillation Index (NOAA CPC, standardized) | 1951 to 2026 |
+| `bathymetry_cells.csv` | depth, depth SD, shelf fraction, distance to 200 m shelf edge per 2-degree cell (ETOPO) | static |
+| `currents_cells.csv` | IMOS GSLA geostrophic currents (u, v, speed, EKE) per cell-month | 2002 to 2015 |
+
+Currents notes: sampled every 15th day (about 2 per month; 2002 uses every 5th
+day), so `n_days` is small and `eke` is unreliable where `n_days` is 1. Years after
+2015 were not downloaded (chlorophyll only goes to 2015); extend with
+`python data-raw/03_download_currents.py 2002 2025` (slow, about 8 min per year).
+Run from the repo root; needs pandas, requests, xarray, netCDF4.
