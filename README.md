@@ -65,3 +65,46 @@ day), so `n_days` is small and `eke` is unreliable where `n_days` is 1. Years af
 2015 were not downloaded (chlorophyll only goes to 2015); extend with
 `python data-raw/03_download_currents.py 2002 2025` (slow, about 8 min per year).
 Run from the repo root; needs pandas, requests, xarray, netCDF4.
+
+## Pipeline (run in order, from the repo root)
+
+1. `analysis/03_download_southern_water.R` — merges the IMOS/AODN southern SST
+   extension (downloaded by `analysis/fetch_sst_southern.py` into
+   `data-raw/sst_southern_2003_2022.csv`) with the Water sheet →
+   `data/water_extended.rds` (lat -67 to -11, 2003-2022 southern coverage).
+2. `analysis/04_add_southern_sightings.R` — appends Southern Ocean humpback
+   records (`data-raw/humpback_southern_ocean_obis.csv`, OBIS API pull,
+   lat -65 to -45, lon 80-180) to the sightings → `data-raw/humpback_all.rds`.
+3. `analysis/01_join_sightings_water.R` — joins sightings (2002+) to the
+   nearest water cell per year-month (1.5° tolerance, recovers coastal
+   records), generates 10x background points → `data/sightings_with_env.rds`,
+   `data/background_with_env.rds`.
+4. `analysis/02_fit_suitability.R` — seasonal presence-background GAMs
+   (breeding Jun-Sep, feeding Nov-Feb; background capped to presence SST ±1 °C
+   and lat ±2°) → `data/thermal_envelopes.csv`, `data/suitability_curves.csv`,
+   `data/suitability_models.rds`, `analysis/thermal_envelopes.png`.
+
+`analysis/01b_diagnostics.R` is an optional assumption-check pass (SST
+contrast, Chl-a missingness, effort bias) — run any time after step 3.
+
+## Fitted thermal envelopes (2026-10-10 run)
+
+| season   | n presences | T_opt (°C) | sigma_T (°C) |
+|----------|-------------|------------|--------------|
+| breeding | 12,486      | 21.3       | 4.6          |
+| feeding  | 8,566       | -0.9       | 6.1          |
+
+Feeding T_opt sits at the cold data edge: interpret the feeding envelope as a
+broad cold-water envelope (suitability ~1 below ~12 °C, 0 above ~17 °C).
+
+## Data provenance
+
+- `data-raw/sst_southern_2003_2022.csv`: IMOS SRS GHRSST L3S-1m/day (monthly
+  AVHRR SST composites), AODN THREDDS NetcdfSubset, lat -67 to -39,
+  lon 143 to 170, aggregated to the 2° grid. 240 months, 51,263 cell-months,
+  no gaps. For 2023+ use IMOS/SRS/SST/ghrsst/L4/RAMSSA (daily, gap-free).
+- `data-raw/humpback_southern_ocean_obis.csv`: OBIS API v3,
+  *Megaptera novaeangliae*, lat -65 to -45, lon 80-180 (7,824 records;
+  7,551 in Nov-Feb feeding season, 6,909 post-2003).
+- Salinity (SODA, to 2015) is unused; Chl-a retained only for feeding-season
+  fits (breeding coverage ~47% missing).

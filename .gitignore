@@ -20,3 +20,7 @@ Thumbs.db
 
 # download cache
 data-raw/cache/
+
+# Pipeline outputs (re-created by running analysis/ scripts in order)
+data/
+data-raw/humpback_all.rds
