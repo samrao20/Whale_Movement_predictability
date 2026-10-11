@@ -131,6 +131,31 @@ broad cold-water envelope (suitability ~1 below ~12 °C, 0 above ~17 °C).
 - Salinity (SODA, to 2015) is unused; Chl-a retained only for feeding-season
   fits (breeding coverage ~47% missing).
 
+## Tag migration vs IMOS environment (`analysis/05_tag_migration_by_year.py`)
+
+Matches every smoothed satellite-tag position to IMOS data and compares the tagging campaigns.
+
+| step | script | output |
+|---|---|---|
+| IMOS monthly SST + SST front strength at each tag position | `data-raw/06_tag_imos_sst.py` | `data/tag_points_env.csv` |
+| IMOS GSLA sea level / geostrophic currents (every 7th day, nearest day within 3 days, lat -60 to -10 only) | `data-raw/07_tag_imos_currents.py` | `data/tag_points_currents.csv` |
+| Per-whale southbound metrics and figures | `analysis/05_tag_migration_by_year.py` | `data/tag_migration_metrics.csv`, `analysis/tag_*.png` |
+
+The tags are four separate campaigns, not four comparable years: Oct-Nov 2008 (15 whales off Eden,
+southbound), Jun 2009 (13, Queensland, northbound), Feb-Mar 2010 (14, tagged in Antarctic waters),
+Oct 2010 (6, Queensland, southbound, tracked to Jul 2011). Only 2008 vs 2010 southbound can be
+compared, and they started 11 degrees of latitude apart.
+
+Findings so far (suggestive only): both groups crossed 40S in early November (5 Nov 2008, 10 Nov 2010);
+the 2010 whales reached 60S about two weeks earlier (23 Nov vs 8 Dec) and moved faster between 40S and
+60S (about 112 vs 92 km/day), but that rests on 3 whales in 2010 vs 8 in 2008. SST along the route was
+almost identical (about 9.3 vs 9.5 C on the 40-60S leg). Front-strength and current curves are noisy
+for 2010 because few whales contribute to each latitude bin.
+
+Notes: SST below -1.9 C is treated as ice/retrieval artefact; about 12% of points have no SST (ice,
+cloud). Chlorophyll is not included (IMOS only provides daily MODIS files, mostly cloud-covered at
+these latitudes). Tracks cross the dateline (longitude is shown as 0-360).
+
 ## References
 
 See [docs/references.md](docs/references.md) for papers, datasets and similar studies. Add to it as you find more.
