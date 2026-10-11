@@ -87,3 +87,7 @@ doi:10.5441/001/1.294, CC0): 50 east Australian humpbacks (breeding stock E1) ta
 Argos fixes). `data-raw/05_make_tag_excel.py` builds `data/humpback_satellite_tags.xlsx`
 (sheets: Read_me, Whales, Tracks_modelled, Tracks_raw_argos). 48 whales have modelled
 tracks. Please cite the dataset and paper when using it.
+
+## References
+
+See [docs/references.md](docs/references.md) for papers, datasets and similar studies. Add to it as you find more.
