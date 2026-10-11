@@ -1,6 +1,6 @@
 # Whale Movement Predictability
 
-Building a model / formula to quantify how predictable whale movement is, using
+Building a model / formula to quantify the predictability of whale movement patterns on average, using
 environmental covariates (e.g. IMOS pulls, SRS ocean colour Chl-a as a proxy for
 prey / productivity).
 
