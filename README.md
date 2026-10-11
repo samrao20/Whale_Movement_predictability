@@ -156,6 +156,32 @@ Notes: SST below -1.9 C is treated as ice/retrieval artefact; about 12% of point
 cloud). Chlorophyll is not included (IMOS only provides daily MODIS files, mostly cloud-covered at
 these latitudes). Tracks cross the dateline (longitude is shown as 0-360).
 
+## What drives tag movement, by group (`analysis/06_tag_movement_drivers.py`)
+
+Adds chlorophyll (`data-raw/08_tag_chlorophyll.py`: ESA CCI monthly ocean colour via NOAA ERDDAP,
+`data/tag_points_chl.csv`, 87% of points matched; gaps are polar night / ice in Apr-May 2010) and
+asks what is associated with how fast whales travel, within groups = tagging campaign x latitude zone
+(N of 45S, 45-60S, S of 60S).
+
+Method: one position per whale per day; daily travel speed; drivers z-scored within group (effect per
++1 SD): SST anomaly and chlorophyll anomaly (both relative to the latitude/month norm, because raw SST is
+99% explained by latitude and season), SST front strength, southward current (IMOS GSLA, N of 60S), plus latitude as a
+control. Speed uses a linear mixed model with whale as random intercept; "tortuous path" (path
+straightness < 0.5 over 4 days) uses a logistic GEE with whale clusters.
+Outputs: `data/tag_driver_models.csv`, `data/tag_daily_steps.csv`, `analysis/tag_driver_heatmap.png`,
+`analysis/tag_driver_binned.png`.
+
+Main results (speed model): higher chlorophyll goes with slower travel for the 2008 whales in all three
+zones (-0.24, -0.10, -0.18 log-speed per SD); a stronger southward current goes with faster travel in
+three groups (+0.08 to +0.14); SST anomaly is positive for the 2008 whales N of 45S only; SST fronts show no
+consistent effect; the Antarctic feeding groups show nothing significant. 11 of 46 non-latitude effects have
+intervals excluding 0 (about 24%), more than chance alone but unadjusted for multiple tests.
+
+Cautions: associations, not causes. Daily positions are autocorrelated and only 3-15 whales feed each group
+(65-284 whale-days), so intervals are likely too narrow. The tortuous-path model is unstable (huge latitude
+coefficients, likely near-separation); treat it as exploratory. Monthly SST/chlorophyll cannot see
+day-scale prey patches, and the binned plot pools all latitudes, so it is confounded by latitude.
+
 ## References
 
 See [docs/references.md](docs/references.md) for papers, datasets and similar studies. Add to it as you find more.
