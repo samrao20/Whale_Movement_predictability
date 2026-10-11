@@ -131,6 +131,57 @@ broad cold-water envelope (suitability ~1 below ~12 °C, 0 above ~17 °C).
 - Salinity (SODA, to 2015) is unused; Chl-a retained only for feeding-season
   fits (breeding coverage ~47% missing).
 
+## Tag migration vs IMOS environment (`analysis/05_tag_migration_by_year.py`)
+
+Matches every smoothed satellite-tag position to IMOS data and compares the tagging campaigns.
+
+| step | script | output |
+|---|---|---|
+| IMOS monthly SST + SST front strength at each tag position | `data-raw/06_tag_imos_sst.py` | `data/tag_points_env.csv` |
+| IMOS GSLA sea level / geostrophic currents (every 7th day, nearest day within 3 days, lat -60 to -10 only) | `data-raw/07_tag_imos_currents.py` | `data/tag_points_currents.csv` |
+| Per-whale southbound metrics and figures | `analysis/05_tag_migration_by_year.py` | `data/tag_migration_metrics.csv`, `analysis/tag_*.png` |
+
+The tags are four separate campaigns, not four comparable years: Oct-Nov 2008 (15 whales off Eden,
+southbound), Jun 2009 (13, Queensland, northbound), Feb-Mar 2010 (14, tagged in Antarctic waters),
+Oct 2010 (6, Queensland, southbound, tracked to Jul 2011). Only 2008 vs 2010 southbound can be
+compared, and they started 11 degrees of latitude apart.
+
+Findings so far (suggestive only): both groups crossed 40S in early November (5 Nov 2008, 10 Nov 2010);
+the 2010 whales reached 60S about two weeks earlier (23 Nov vs 8 Dec) and moved faster between 40S and
+60S (about 112 vs 92 km/day), but that rests on 3 whales in 2010 vs 8 in 2008. SST along the route was
+almost identical (about 9.3 vs 9.5 C on the 40-60S leg). Front-strength and current curves are noisy
+for 2010 because few whales contribute to each latitude bin.
+
+Notes: SST below -1.9 C is treated as ice/retrieval artefact; about 12% of points have no SST (ice,
+cloud). Chlorophyll is not included (IMOS only provides daily MODIS files, mostly cloud-covered at
+these latitudes). Tracks cross the dateline (longitude is shown as 0-360).
+
+## What drives tag movement, by group (`analysis/06_tag_movement_drivers.py`)
+
+Adds chlorophyll (`data-raw/08_tag_chlorophyll.py`: ESA CCI monthly ocean colour via NOAA ERDDAP,
+`data/tag_points_chl.csv`, 87% of points matched; gaps are polar night / ice in Apr-May 2010) and
+asks what is associated with how fast whales travel, within groups = tagging campaign x latitude zone
+(N of 45S, 45-60S, S of 60S).
+
+Method: one position per whale per day; daily travel speed; drivers z-scored within group (effect per
++1 SD): SST anomaly and chlorophyll anomaly (both relative to the latitude/month norm, because raw SST is
+99% explained by latitude and season), SST front strength, southward current (IMOS GSLA, N of 60S), plus latitude as a
+control. Speed uses a linear mixed model with whale as random intercept; "tortuous path" (path
+straightness < 0.5 over 4 days) uses a logistic GEE with whale clusters.
+Outputs: `data/tag_driver_models.csv`, `data/tag_daily_steps.csv`, `analysis/tag_driver_heatmap.png`,
+`analysis/tag_driver_binned.png`.
+
+Main results (speed model): higher chlorophyll goes with slower travel for the 2008 whales in all three
+zones (-0.24, -0.10, -0.18 log-speed per SD); a stronger southward current goes with faster travel in
+three groups (+0.08 to +0.14); SST anomaly is positive for the 2008 whales N of 45S only; SST fronts show no
+consistent effect; the Antarctic feeding groups show nothing significant. 11 of 46 non-latitude effects have
+intervals excluding 0 (about 24%), more than chance alone but unadjusted for multiple tests.
+
+Cautions: associations, not causes. Daily positions are autocorrelated and only 3-15 whales feed each group
+(65-284 whale-days), so intervals are likely too narrow. The tortuous-path model is unstable (huge latitude
+coefficients, likely near-separation); treat it as exploratory. Monthly SST/chlorophyll cannot see
+day-scale prey patches, and the binned plot pools all latitudes, so it is confounded by latitude.
+
 ## References
 
 See [docs/references.md](docs/references.md) for papers, datasets and similar studies. Add to it as you find more.
