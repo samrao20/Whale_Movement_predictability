@@ -66,6 +66,28 @@ day), so `n_days` is small and `eke` is unreliable where `n_days` is 1. Years af
 `python data-raw/03_download_currents.py 2002 2025` (slow, about 8 min per year).
 Run from the repo root; needs pandas, requests, xarray, netCDF4.
 
+## Modelling table: `data/cell_month_2002_2015.csv`
+
+Built by `data-raw/04_build_cell_month_table.py`. One row per 2-degree cell and month
+(35,420 rows, 2002 to 2015). Contains the Water columns, `sst_anom_C` (vs. the cell's
+2002-2015 monthly mean), `chl_log10`, previous-month `sst_lag1_C` / `chl_log10_lag1`,
+SOI, bathymetry, currents, and the whale columns `n_sightings`, `n_individuals`
+(only records that gave a count; see `n_with_count`), `present` and effort proxies
+`effort_year`, `effort_year_month`.
+
+Zeros in `n_sightings` mean "no sighting recorded", not confirmed absence. Effort is
+very uneven (e.g. 3,611 sightings in 2008 vs ~150 to 650 in most years), so include
+effort in models.
+
+## Satellite tag data
+
+`data-raw/tags/` holds the public tag dataset (Andrews-Goff et al. 2023, Movebank,
+doi:10.5441/001/1.294, CC0): 50 east Australian humpbacks (breeding stock E1) tagged
+2008 to 2010, 30,388 locations (13,311 smoothed state-space-model positions, 17,077 raw
+Argos fixes). `data-raw/05_make_tag_excel.py` builds `data/humpback_satellite_tags.xlsx`
+(sheets: Read_me, Whales, Tracks_modelled, Tracks_raw_argos). 48 whales have modelled
+tracks. Please cite the dataset and paper when using it.
+
 ## Pipeline (run in order, from the repo root)
 
 1. `analysis/03_download_southern_water.R` — merges the IMOS/AODN southern SST
@@ -108,3 +130,7 @@ broad cold-water envelope (suitability ~1 below ~12 °C, 0 above ~17 °C).
   7,551 in Nov-Feb feeding season, 6,909 post-2003).
 - Salinity (SODA, to 2015) is unused; Chl-a retained only for feeding-season
   fits (breeding coverage ~47% missing).
+
+## References
+
+See [docs/references.md](docs/references.md) for papers, datasets and similar studies. Add to it as you find more.
