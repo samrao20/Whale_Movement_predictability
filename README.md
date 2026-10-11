@@ -78,3 +78,12 @@ SOI, bathymetry, currents, and the whale columns `n_sightings`, `n_individuals`
 Zeros in `n_sightings` mean "no sighting recorded", not confirmed absence. Effort is
 very uneven (e.g. 3,611 sightings in 2008 vs ~150 to 650 in most years), so include
 effort in models.
+
+## Satellite tag data
+
+`data-raw/tags/` holds the public tag dataset (Andrews-Goff et al. 2023, Movebank,
+doi:10.5441/001/1.294, CC0): 50 east Australian humpbacks (breeding stock E1) tagged
+2008 to 2010, 30,388 locations (13,311 smoothed state-space-model positions, 17,077 raw
+Argos fixes). `data-raw/05_make_tag_excel.py` builds `data/humpback_satellite_tags.xlsx`
+(sheets: Read_me, Whales, Tracks_modelled, Tracks_raw_argos). 48 whales have modelled
+tracks. Please cite the dataset and paper when using it.
