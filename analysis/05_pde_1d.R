@@ -114,9 +114,13 @@ pde_step <- function(C, v, D) {
   Df <- 0.5 * (D[-N] + D[-1])
   dif_flux <- -Df * (C[-1] - C[-N]) / dx_km
   net <- adv_flux + dif_flux                     # poleward flux across faces
+  # zero-flux boundaries: end faces carry no flux, so boundary cells keep the
+  # one interior face they own. Freezing dC at the boundary cells (previous
+  # version) leaked ~2/3 of total mass through those faces over 3 years.
   dC <- numeric(N)
+  dC[1] <- -net[1] / dx_km
+  dC[N] <-  net[N - 1] / dx_km
   dC[2:(N - 1)] <- -(net[2:(N - 1)] - net[1:(N - 2)]) / dx_km
-  # zero-flux boundaries: no flux through the end faces
   C + dt * dC
 }
 
